@@ -2,15 +2,203 @@
 <!DOCTYPE html>
 <html lang="tr">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Artık Olmasın - TÜBİTAK Projesi</title>
-<meta name="description" content="Artık Olmasın, evsel atıkları yaratıcı ve sürdürülebilir yollarla yeniden kullanmayı öğreten interaktif bir web platformudur.">
-<script src="https://cdn.tailwindcss.com"></script>
-<style>body{font-family:'Inter',sans-serif;} .card{transition:all 0.3s ease-in-out;} .card:hover{transform:translateY(-5px) scale(1.02);}</style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Atığını Değerlendir - TÜBİTAK Projesi</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+        }
+        .card {
+            transition: all 0.3s ease-in-out;
+        }
+        .card:hover {
+            transform: translateY(-5px) scale(1.02);
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+        }
+        /* Kaydırma çubuğu stilleri */
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #f1f1f1;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #888;
+            border-radius: 10px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: #555;
+        }
+        /* Otomatik tamamlama öneri stilleri */
+        .suggestion-item {
+            padding: 12px 20px;
+            cursor: pointer;
+            transition: background-color 0.2s;
+        }
+        .suggestion-item:hover {
+            background-color: #f0fdf4; /* Light green on hover */
+        }
+    </style>
 </head>
-<body>
-<h1>Artık Olmasın 🌱</h1>
-<!-- Atık verileri ve script buraya eklenecek -->
+<body class="bg-gradient-to-br from-green-100 via-teal-100 to-blue-200 min-h-screen">
+
+    <!-- Ana Konteyner -->
+    <div class="container mx-auto p-4 md:p-8">
+
+        <!-- Başlık Bölümü -->
+        <header class="text-center mb-8">
+            <h1 class="text-4xl md:text-5xl font-bold text-gray-800 mb-2">
+                Atığını Değerlendir 🌱
+            </h1>
+            <p class="text-lg text-gray-600">
+                Evsel atıklar için yaratıcı ve sürdürülebilir yeniden kullanım fikirleri.
+            </p>
+        </header>
+
+        <!-- Arama Kutusu Bölümü -->
+        <div class="max-w-2xl mx-auto mb-8 sticky top-4 z-10 relative">
+             <div class="relative bg-white/80 backdrop-blur-sm rounded-full shadow-lg">
+                <div class="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
+                     <svg class="h-5 w-5 text-gray-400" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">
+                        <path fill-rule="evenodd" d="M8 4a4 4 0 100 8 4 4 0 000-8zM2 8a6 6 0 1110.89 3.476l4.817 4.817a1 1 0 01-1.414 1.414l-4.816-4.816A6 6 0 012 8z" clip-rule="evenodd" />
+                    </svg>
+                </div>
+                <input type="text" id="searchInput" placeholder="Yeniden kullanmak istediğin atığı yaz (örn: muz kabuğu)" class="w-full py-4 pl-12 pr-4 bg-transparent border-0 rounded-full focus:ring-2 focus:ring-green-500 text-gray-800 placeholder-gray-500">
+            </div>
+            <!-- Otomatik Tamamlama Öneri Kutusu -->
+            <div id="autocomplete-suggestions" class="absolute w-full mt-1 bg-white/90 backdrop-blur-sm rounded-xl shadow-lg z-20 hidden overflow-hidden">
+            </div>
+        </div>
+
+        <!-- Sonuçların Gösterileceği Alan -->
+        <main id="resultsContainer" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            <!-- Atık kartları buraya JavaScript ile eklenecek -->
+        </main>
+
+        <!-- Footer -->
+        <footer class="text-center mt-12 text-gray-500">
+            <p>Bu web sitesi bir TÜBİTAK projesi için tasarlanmıştır.</p>
+        </footer>
+
+    </div>
+
+    <script>
+        // Evsel atık verileri
+        const wasteData = [
+            { name: "Armut Koçanı", ideas: ["Komposta atarak doğal gübreye dönüştür.", "Kurutup oda kokusu karışımına (potpourri) ekle.", "Küçük kuşlar için doğaya bırak — yem olarak kullanılır."] },
+            { name: "Muz Kabuğu", ideas: ["Bitki yapraklarını parlatmak için kullan.", "Toprağa gömüp doğal potasyum gübresi yap.", "Sivrisinek kovucu olarak sirke ile karıştır."] },
+            { name: "Yumurta Kabuğu", ideas: ["Blender’da toz haline getirip kalsiyum desteği olarak bitkilere ekle.", "Tencere dibindeki yanıkları ovmak için doğal aşındırıcı.", "Fideleri dikmek için minik saksı olarak kullan."] },
+            { name: "Kahve Telvesi", ideas: ["Cilt peelingi yap (zeytinyağıyla karıştır).", "Kötü kokuları emmesi için buzdolabına koy.", "Toprağa serpip böcekleri uzak tut."] },
+            { name: "Çay Poşeti", ideas: ["Göz altı şişliklerini azaltmak için soğutup uygula.", "Ayakkabı veya buzdolabı kokusunu gidermek için koy.", "Bitki sulamasında hafif gübre olarak kullan."] },
+            { name: "Ekmek Artığı", ideas: ["Kurutup galeta unu yap.", "Kuşlara yem olarak ver.", "Sirke tuzağıyla mutfak sineklerini yakalamak için kullan."] },
+            { name: "Soğan Kabuğu", ideas: ["Doğal kumaş boyası yap.", "Bitkiler için mineral kaynağı (kaynatıp suyu ile sula).", "Saç rengi koyulaştırıcı doğal karışım olarak değerlendir."] },
+            { name: "Patates Kabuğu", ideas: ["Yüzeylerdeki pas lekelerini ovmak için kullan.", "Fırınlayıp çıtır atıştırmalık yap.", "Kompost malzemesi olarak ekle."] },
+            { name: "Havuç Kabuğu", ideas: ["Sebze suyu veya çorba yapımında değerlendir.", "Kurutup toz haline getirip baharat gibi kullan.", "Evcil hayvanlara (tavşan, hamster) atıştırmalık olarak ver."] },
+            { name: "Elma Kabuğu", ideas: ["Elma kabuğu çayı yap.", "Sirke üretiminde kullan.", "Kurutup aromatik potpourri karışımına ekle."] },
+            { name: "Limon Kabuğu", ideas: ["Kabartma tozuyla karıştırıp doğal yüzey temizleyici.", "Kurutup çay veya tatlılarda aroma olarak kullan.", "Buz kalıbına koyup dondurarak limonlu buz yap."] },
+            { name: "Portakal Kabuğu", ideas: ["Sirkede bekletip doğal temizlik spreyi yap.", "Şekerleyip tatlılarda kullan.", "Lavanta ile karıştırıp oda kokusu torbası yap."] },
+            { name: "Gazete Kâğıdı", ideas: ["Camları iz bırakmadan silmek için kullan.", "Paketleme ve kırılacak eşya koruması için.", "Kompostta karbon kaynağı olarak."] },
+            { name: "Plastik Şişe", ideas: ["Küçük saksılara dönüştür.", "Sulama sistemi yapmak için (delik aç, toprağa göm).", "Kalemlik veya organizer yap."] },
+            { name: "Cam Kavanoz", ideas: ["Baharat veya bakliyat saklama kabı.", "Mumluk yap.", "Mini teraryum oluştur."] },
+            { name: "Karton Kutu", ideas: ["Çekmece düzenleyici kutular yap.", "Çocuklar için el işi malzemesi olarak kullan.", "Geri dönüşüme hazırlamak için düzleştir."] },
+            { name: "Eski Ampul", ideas: ["İçini boşaltıp mini vazo yap.", "Noel süsü olarak değerlendir.", "Minyatür ekosistem (mini bitki) yerleştir."] },
+            { name: "Eski Tişört", ideas: ["Temizlik bezi olarak kesip kullan.", "Yastık kılıfı veya torba dikebilirsin.", "Evcil hayvan yatağı içi dolgusu yap."] },
+            { name: "Eski Çorap", ideas: ["Toz bezi veya mob temizlik pedi olarak kullan.", "Sıcak kompres torbası yap (pirinç doldur, mikrodalgada ısıt).", "Küçük eşyalar için paketleme koruması."] },
+            { name: "Diş Fırçası", ideas: ["Musluk aralarını veya ayakkabı tabanlarını temizle.", "Saç boyası fırçası olarak kullan.", "Klavye temizliği için ideal."] },
+            { name: "Plastik Kapaklar", ideas: ["Renkli oyun/öğretici malzeme (çocuklar için).", "Minik saksı altlığı.", "El işi süslemelerinde kullan."] },
+            { name: "Alüminyum Folyo", ideas: ["Makas bileylemek için katlayıp kes.", "Fırın ızgarasını parlatmak için kullan.", "Elektrik tasarrufu için radyatör arkasına yerleştir."] },
+            { name: "Kağıt Havlu Rulosu", ideas: ["Kabloları düzenlemek için kullan.", "Tohum çimlendirme tüpü yap.", "Kalemlik veya küçük el işi projesi."] },
+            { name: "Deterjan Şişesi", ideas: ["Bahçe sulama kabı yap (delik aç).", "Sıvı sabun doldurmak için kullan.", "Kuş yemliği oluştur."] },
+            { name: "CD / DVD", ideas: ["Bahçede kuş korkutucu olarak as.", "Renkli duvar süsü yap.", "Altını mumluk olarak değerlendir."] },
+            { name: "Eski Kitap / Dergi", ideas: ["Kolaj veya tablo süsü olarak kes-yapıştır projelerinde kullan.", "Sayfalarını zarflara dönüştür.", "Raf süsü veya vintage dekor malzemesi olarak değerlendir."] },
+            { name: "Şarap Mantarı", ideas: ["Anahtarlık veya iğne yastığı yap.", "Saksı altlığı olarak kullan.", "Mini pano oluşturmak için birleştir."] },
+            { name: "Pil (Boş)", ideas: ["Geri dönüşüm kutusuna ayrı topla (asla çöpe atma).", "Sanat projesinde ağırlık/destek olarak kullan.", "Geri dönüşüm merkezinde enerjiye dönüştürülür."] },
+            { name: "Eski Tava/Tencere", ideas: ["Saksı veya bahçe dekoruna dönüştür.", "Kapak kısmını duvar saati yap.", "Kedi-köpek mama kabı olarak kullan."] },
+            { name: "Eski Havlu", ideas: ["Banyo paspası dik.", "Temizlik bezi olarak kes.", "El yapımı bez torba astarı olarak kullan."] },
+            { name: "Eski Mum Artığı", ideas: ["Yeni mum yapmak için erit.", "Fermuar yağlamak için kullan.", "Ahşap çekmecelerin kayganlığı için sür."] },
+            { name: "Cam Şişe", ideas: ["Mumluk veya dekoratif vazo.", "Işık dizisiyle lamba yap.", "Soğuk su şişesi olarak kullan."] },
+            { name: "Muz Sapı", ideas: ["Bitkiler için potasyumca zengin komposta ekle.", "Kurutup doğal ip olarak kullan.", "Ev yapımı boya fırçası sapı olarak değerlendir."] }
+        ];
+
+        // HTML elementlerini seçme
+        const searchInput = document.getElementById('searchInput');
+        const resultsContainer = document.getElementById('resultsContainer');
+        const autocompleteSuggestions = document.getElementById('autocomplete-suggestions');
+
+        // Atık kartlarını ekrana çizen fonksiyon
+        function renderResults(items) {
+            resultsContainer.innerHTML = ''; // Önceki sonuçları temizle
+            if (items.length === 0) {
+                resultsContainer.innerHTML = `<div class="col-span-full text-center p-8 bg-white/80 rounded-lg shadow-md">
+                    <h3 class="text-xl font-semibold text-gray-700">Sonuç bulunamadı.</h3>
+                    <p class="text-gray-500 mt-2">Lütfen farklı bir anahtar kelime deneyin.</p>
+                </div>`;
+                return;
+            }
+            resultsContainer.innerHTML = items.map(item => `
+                <div class="card bg-white/80 backdrop-blur-sm p-6 rounded-xl shadow-md flex flex-col">
+                    <h3 class="text-xl font-bold text-green-800 mb-4">${item.name}</h3>
+                    <ul class="space-y-3 list-disc list-inside text-gray-700 flex-grow">
+                        ${item.ideas.map(idea => `<li>${idea}</li>`).join('')}
+                    </ul>
+                </div>
+            `).join('');
+        }
+
+        // Otomatik tamamlama önerilerini gösteren fonksiyon
+        function showSuggestions(suggestions) {
+            if (suggestions.length === 0 || searchInput.value.trim() === '') {
+                autocompleteSuggestions.innerHTML = '';
+                autocompleteSuggestions.classList.add('hidden');
+                return;
+            }
+
+            autocompleteSuggestions.innerHTML = suggestions.map(suggestion => 
+                `<div class="suggestion-item text-gray-700">${suggestion}</div>`
+            ).join('');
+            
+            autocompleteSuggestions.classList.remove('hidden');
+
+            document.querySelectorAll('.suggestion-item').forEach(item => {
+                item.addEventListener('click', (event) => {
+                    const selectedText = event.target.textContent;
+                    searchInput.value = selectedText;
+                    autocompleteSuggestions.classList.add('hidden');
+                    const selectedData = wasteData.filter(wasteItem => wasteItem.name === selectedText);
+                    renderResults(selectedData);
+                });
+            });
+        }
+
+        // Arama kutusuna her harf girildiğinde çalışacak fonksiyon
+        searchInput.addEventListener('input', (event) => {
+            const searchTerm = event.target.value.toLowerCase().trim();
+            
+            const filteredData = wasteData.filter(item => 
+                item.name.toLowerCase().includes(searchTerm)
+            );
+            
+            const suggestions = filteredData.map(item => item.name);
+            
+            showSuggestions(suggestions);
+            renderResults(filteredData);
+        });
+
+        // Sayfada başka bir yere tıklandığında önerileri gizle
+        document.addEventListener('click', (event) => {
+            if (!event.target.closest('.relative')) {
+                 autocompleteSuggestions.classList.add('hidden');
+            }
+        });
+
+        // Sayfa ilk yüklendiğinde tüm sonuçları göster
+        renderResults(wasteData);
+    </script>
 </body>
 </html>
+
